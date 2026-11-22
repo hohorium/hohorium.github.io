@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ko"> 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>계정 및 데이터 삭제 · CreHub</title>
+  <style>
+    body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f5f7f5;color:#1b241e;margin:0}.wrap{max-width:820px;margin:auto;padding:32px 20px 70px}.card{background:#fff;border-radius:18px;padding:28px;box-shadow:0 2px 18px #0000000c}h1{font-size:28px;margin:0 0 8px}h2{font-size:19px;margin:30px 0 10px}p,li{line-height:1.72}.muted{color:#68736b;font-size:14px}.warn{background:#fff5e8;border-radius:12px;padding:14px}.nav{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}a{color:#246b43}input,textarea{width:100%;box-sizing:border-box;border:1px solid #ccd5cf;border-radius:10px;padding:12px;font:inherit;margin:6px 0 12px}button{border:0;border-radius:10px;padding:12px 16px;background:#246b43;color:#fff;font-weight:700;cursor:pointer}.status{margin-top:12px;font-weight:700}
+  </style>
+</head>
+<body><div class="wrap">
+  <div class="nav"><a href="index.html">정책 안내</a><a href="privacy.html">개인정보처리방침</a><a href="terms.html">이용약관</a><a href="account-deletion.html">계정 삭제</a></div>
+  <div class="card">
+    <h1>CreHub 계정 및 데이터 삭제</h1><p class="muted">시행일 2026-08-17</p>
+    <p>앱을 사용할 수 있다면 <b>더보기 → 내 프로필 → 회원탈퇴</b>에서 계정과 연결 데이터를 직접 삭제할 수 있습니다.</p>
+    <div class="warn"><b>Premium 구독 이용자</b><br>Google Play 자동 갱신은 CreHub 계정 삭제와 별개입니다. Play 스토어의 정기 결제 메뉴에서 Premium 자동 갱신을 먼저 취소한 뒤 계정을 삭제해주세요.</div>
+    <h2>삭제되는 항목</h2><ul>
+      <li>CreHub 로그인 계정과 개인 프로필 정보</li>
+      <li>사육 기록, Premium·크레딧 및 결제 검증에 연결된 앱 계정 데이터</li>
+      <li>클라우드 백업·기기 동기화 데이터</li>
+      <li>서버에 남아 있는 과거 AI 기록과 개인용 미디어</li>
+      <li>푸시 토큰, 차단·설정 등 개인 계정 활동 데이터</li>
+    </ul>
+    <h2>남는 항목</h2><p>다른 이용자와 이미 공유된 게시글·댓글·공용채팅·1:1 채팅과 해당 콘텐츠의 첨부 이미지는 대화와 게시 흐름을 유지하기 위해 남을 수 있습니다. 이 경우 프로필 사진·소개·로그인 정보는 제거되고 작성자는 <b>‘탈퇴한 사용자’</b>로 표시됩니다.</p>
+    <h2>앱을 사용할 수 없는 경우</h2><p>아래 양식으로 삭제를 요청할 수 있습니다. 계정 소유 확인이 필요한 경우 추가 확인 절차가 진행될 수 있습니다.</p>
+    <form id="requestForm">
+      <label>CreHub 로그인 이메일</label><input id="email" type="email" autocomplete="email" required maxlength="254">
+      <label>추가 메모 (선택)</label><textarea id="message" rows="4" maxlength="1000"></textarea>
+      <button type="submit">계정 삭제 요청 제출</button><div id="status" class="status"></div>
+    </form>
+  </div>
+</div>
+<script>
+const endpoint='https://fumjiligxivbfhhhcjcu.supabase.co/functions/v1/crehub-public-request';
+document.getElementById('requestForm').addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  const s=document.getElementById('status');
+  s.textContent='전송 중...';
+  try{
+    const r=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({request_type:'account_deletion',email:document.getElementById('email').value,message:document.getElementById('message').value})});
+    const d=await r.json().catch(()=>({}));
+    s.textContent=r.ok?'요청이 접수되었습니다. 요청 번호: '+d.request_id:(d.error||'요청을 접수하지 못했습니다.');
+  }catch(_){s.textContent='네트워크 오류로 요청을 접수하지 못했습니다.';}
+});
+</script>
+</body></html>
